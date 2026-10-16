@@ -1,6 +1,6 @@
 const stokItems = ["Cinnamon", "Joy Choux", "Mac n cheese", "Donang", "Joy QQ", "Cheese cake"];
 
-let salesItems = [
+let defaultSalesItems = [
   { name: "Single Cinn", price: 11000 },
   { name: "Cinn standarisi 4", price: 38000 },
   { name: "Joy Choux 6", price: 6000 },
@@ -22,12 +22,15 @@ let salesItems = [
   { name: "Cheesecake", price: 35000 }
 ];
 
+let salesItems = JSON.parse(JSON.stringify(defaultSalesItems));
+
 function formatRupiah(number) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
 }
 
 function renderStokTable() {
   const tbody = document.getElementById('stok-table-body');
+  if (!tbody) return;
   tbody.innerHTML = '';
   stokItems.forEach((item, index) => {
     const row = document.createElement('tr');
@@ -47,33 +50,39 @@ function renderStokTable() {
 }
 
 function calcStok(index) {
-  const awal = parseFloat(document.getElementById(`stok-awal-${index}`).value) || 0;
-  const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`).value) || 0;
+  const awal = parseFloat(document.getElementById(`stok-awal-${index}`)?.value) || 0;
+  const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`)?.value) || 0;
   
   const sisaInput = document.getElementById(`stok-sisa-${index}`);
-  if (sisa > awal && awal > 0) {
-    sisaInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-  } else {
-    sisaInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+  if (sisaInput) {
+    if (sisa > awal && awal > 0) {
+      sisaInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+    } else {
+      sisaInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+    }
   }
 
   const terjual = awal - sisa;
-  document.getElementById(`stok-terjual-${index}`).innerText = terjual >= 0 ? terjual : 0;
+  const elTerjual = document.getElementById(`stok-terjual-${index}`);
+  if (elTerjual) {
+    elTerjual.innerText = terjual >= 0 ? terjual : 0;
+  }
 }
 
 function renderPenjualanTable() {
   const tbody = document.getElementById('penjualan-table-body');
+  if (!tbody) return;
   tbody.innerHTML = '';
   salesItems.forEach((item, index) => {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
     
     const nameColumn = item.custom 
-      ? `<input type="text" id="name-${index}" value="${item.name}" oninput="salesItems[${index}].name = this.value; validateAll(); saveData();" placeholder="Nama Barang" class="w-full p-0.5 border rounded text-[11px] font-medium">`
+      ? `<input type="text" id="name-${index}" value="${item.name || ''}" oninput="salesItems[${index}].name = this.value; validateAll(); saveData();" placeholder="Nama Barang" class="w-full p-0.5 border rounded text-[11px] font-medium">`
       : item.name;
 
     const deleteBtn = item.custom 
-      ? `<button onclick="removeCustomRow(${index})" class="text-rose-600 hover:text-rose-800 font-bold text-xs no-print px-1">✕</button>`
+      ? `<button type="button" onclick="removeCustomRow(${index})" class="text-rose-600 hover:text-rose-800 font-bold text-xs no-print px-1 cursor-pointer">✕</button>`
       : '';
 
     row.innerHTML = `
@@ -105,39 +114,46 @@ function removeCustomRow(index) {
 }
 
 function calcRow(index) {
-  const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
-  const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+  const price = parseFloat(document.getElementById(`price-${index}`)?.value) || 0;
+  const laku = parseFloat(document.getElementById(`laku-${index}`)?.value) || 0;
   salesItems[index].price = price;
   const subtotal = price * laku;
-  document.getElementById(`subtotal-${index}`).innerText = formatRupiah(subtotal);
+  const elSubtotal = document.getElementById(`subtotal-${index}`);
+  if (elSubtotal) {
+    elSubtotal.innerText = formatRupiah(subtotal);
+  }
   calculateTotal();
 }
 
 function calculateTotal() {
   let grandTotal = 0;
   salesItems.forEach((_, index) => {
-    const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
-    const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+    const price = parseFloat(document.getElementById(`price-${index}`)?.value) || 0;
+    const laku = parseFloat(document.getElementById(`laku-${index}`)?.value) || 0;
     grandTotal += price * laku;
   });
-  document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
+  const elGrandTotal = document.getElementById('grand-total');
+  if (elGrandTotal) {
+    elGrandTotal.innerText = formatRupiah(grandTotal);
+  }
   validateAll();
 }
 
 function validateAll() {
   const alertBox = document.getElementById('warning-alert');
+  if (!alertBox) return;
   let warnings = [];
 
   stokItems.forEach((item, index) => {
-    const awal = parseFloat(document.getElementById(`stok-awal-${index}`).value) || 0;
-    const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`).value) || 0;
+    const awal = parseFloat(document.getElementById(`stok-awal-${index}`)?.value) || 0;
+    const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`)?.value) || 0;
     if (sisa > awal && awal > 0) {
       warnings.push(`Sisa stok <b>${item}</b> (${sisa}) melebihi Stok Awal (${awal})!`);
     }
   });
 
   salesItems.forEach((salesItem, sIndex) => {
-    const laku = parseFloat(document.getElementById(`laku-${sIndex}`).value) || 0;
+    const laku = parseFloat(document.getElementById(`laku-${sIndex}`)?.value) || 0;
     const lakuInput = document.getElementById(`laku-${sIndex}`);
 
     if (!lakuInput) return;
@@ -150,7 +166,7 @@ function validateAll() {
     );
 
     if (matchedStokIndex !== -1 && laku > 0) {
-      const awal = parseFloat(document.getElementById(`stok-awal-${matchedStokIndex}`).value) || 0;
+      const awal = parseFloat(document.getElementById(`stok-awal-${matchedStokIndex}`)?.value) || 0;
       if (laku > awal && awal > 0) {
         lakuInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
         warnings.push(`Penjualan <b>${salesItem.name}</b> (${laku}) melebihi stok awal ${stokItems[matchedStokIndex]} (${awal})!`);
@@ -164,26 +180,26 @@ function validateAll() {
 
   let grandTotal = 0;
   salesItems.forEach((_, index) => {
-    const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
-    const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+    const price = parseFloat(document.getElementById(`price-${index}`)?.value) || 0;
+    const laku = parseFloat(document.getElementById(`laku-${index}`)?.value) || 0;
     grandTotal += price * laku;
   });
 
-  const qrVal = parseFloat(document.getElementById('input-qr').value) || 0;
-  const cashVal = parseFloat(document.getElementById('input-cash').value) || 0;
+  const qrVal = parseFloat(document.getElementById('input-qr')?.value) || 0;
+  const cashVal = parseFloat(document.getElementById('input-cash')?.value) || 0;
   const totalBayar = qrVal + cashVal;
 
   const qrInput = document.getElementById('input-qr');
   const cashInput = document.getElementById('input-cash');
 
   if (grandTotal > 0 && (qrVal > 0 || cashVal > 0) && totalBayar !== grandTotal) {
-    qrInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-    cashInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+    if (qrInput) qrInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+    if (cashInput) cashInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
     const selisih = Math.abs(totalBayar - grandTotal);
     warnings.push(`Total Pembayaran (QR + Cash: <b>${formatRupiah(totalBayar)}</b>) tidak sesuai dengan Total Penjualan (<b>${formatRupiah(grandTotal)}</b>)! Selisih: <b>${formatRupiah(selisih)}</b>`);
   } else {
-    qrInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
-    cashInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+    if (qrInput) qrInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+    if (cashInput) cashInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
   }
 
   if (warnings.length > 0) {
@@ -197,11 +213,11 @@ function validateAll() {
 
 function saveData() {
   const data = {
-    tempat: document.getElementById('input-tempat').value,
-    tanggal: document.getElementById('input-tanggal').value,
-    kasir: document.getElementById('input-kasir').value,
-    qr: document.getElementById('input-qr').value,
-    cash: document.getElementById('input-cash').value,
+    tempat: document.getElementById('input-tempat')?.value || '',
+    tanggal: document.getElementById('input-tanggal')?.value || '',
+    kasir: document.getElementById('input-kasir')?.value || '',
+    qr: document.getElementById('input-qr')?.value || '',
+    cash: document.getElementById('input-cash')?.value || '',
     stok: stokItems.map((_, i) => ({
       awal: document.getElementById(`stok-awal-${i}`)?.value || '',
       sisa: document.getElementById(`stok-sisa-${i}`)?.value || ''
@@ -219,15 +235,16 @@ function saveData() {
 function loadData() {
   const saved = localStorage.getItem('laporan_harian_joy_data');
   if (!saved) {
-    document.getElementById('input-tanggal').valueAsDate = new Date();
+    const inputTgl = document.getElementById('input-tanggal');
+    if (inputTgl) inputTgl.valueAsDate = new Date();
     return;
   }
   const data = JSON.parse(saved);
-  document.getElementById('input-tempat').value = data.tempat || '';
-  document.getElementById('input-tanggal').value = data.tanggal || new Date().toISOString().split('T')[0];
-  document.getElementById('input-kasir').value = data.kasir || '';
-  document.getElementById('input-qr').value = data.qr || '';
-  document.getElementById('input-cash').value = data.cash || '';
+  if (document.getElementById('input-tempat')) document.getElementById('input-tempat').value = data.tempat || '';
+  if (document.getElementById('input-tanggal')) document.getElementById('input-tanggal').value = data.tanggal || new Date().toISOString().split('T')[0];
+  if (document.getElementById('input-kasir')) document.getElementById('input-kasir').value = data.kasir || '';
+  if (document.getElementById('input-qr')) document.getElementById('input-qr').value = data.qr || '';
+  if (document.getElementById('input-cash')) document.getElementById('input-cash').value = data.cash || '';
 
   if (data.stok) {
     data.stok.forEach((s, i) => {
@@ -239,7 +256,7 @@ function loadData() {
     });
   }
 
-  if (data.penjualan) {
+  if (data.penjualan && data.penjualan.length > 0) {
     salesItems = data.penjualan.map(p => ({
       name: p.name,
       price: parseFloat(p.price) || 0,
@@ -269,12 +286,12 @@ function printLaporan() {
 
 function downloadPDF() {
   const element = document.getElementById('laporan-content');
-  const dateVal = document.getElementById('input-tanggal').value || 'tanpa-tanggal';
+  const dateVal = document.getElementById('input-tanggal')?.value || 'tanpa-tanggal';
   const filename = `laporan-${dateVal}.pdf`;
 
   const noPrintElements = document.querySelectorAll('.no-print');
   noPrintElements.forEach(el => el.style.display = 'none');
-  element.classList.add('pdf-render');
+  if (element) element.classList.add('pdf-render');
 
   const opt = {
     margin:       [0.15, 0.15, 0.15, 0.15],
@@ -287,11 +304,11 @@ function downloadPDF() {
 
   html2pdf().set(opt).from(element).save().then(() => {
     noPrintElements.forEach(el => el.style.display = 'flex');
-    element.classList.remove('pdf-render');
+    if (element) element.classList.remove('pdf-render');
   });
 }
 
-// Inisialisasi
+// Inisialisasi awal
 renderStokTable();
 renderPenjualanTable();
 loadData();
