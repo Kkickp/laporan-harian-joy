@@ -33,14 +33,14 @@ function renderStokTable() {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
     row.innerHTML = `
-      <td class="p-1.5 border-r font-medium text-slate-800">${item}</td>
-      <td class="p-1.5 border-r text-center">
-        <input type="number" id="stok-awal-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
+      <td class="p-1 border-r font-medium text-slate-800 text-[11px]">${item}</td>
+      <td class="p-1 border-r text-center">
+        <input type="number" id="stok-awal-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-0.5 border rounded text-[11px]">
       </td>
-      <td class="p-1.5 border-r text-center">
-        <input type="number" id="stok-sisa-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
+      <td class="p-1 border-r text-center">
+        <input type="number" id="stok-sisa-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-0.5 border rounded text-[11px]">
       </td>
-      <td class="p-1.5 text-center bg-slate-100 font-bold text-slate-700 text-xs" id="stok-terjual-${index}">0</td>
+      <td class="p-1 text-center bg-slate-100 font-bold text-slate-700 text-[11px]" id="stok-terjual-${index}">0</td>
     `;
     tbody.appendChild(row);
   });
@@ -68,14 +68,14 @@ function renderPenjualanTable() {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
     row.innerHTML = `
-      <td class="p-1.5 border-r font-medium text-slate-800">${item.name}</td>
-      <td class="p-1.5 border-r text-right">
-        <input type="number" id="price-${index}" value="${item.price}" oninput="calcRow(${index}); saveData();" class="w-full text-right p-1 border rounded text-xs">
+      <td class="p-1 border-r font-medium text-slate-800 text-[11px]">${item.name}</td>
+      <td class="p-1 border-r text-right">
+        <input type="number" id="price-${index}" value="${item.price}" oninput="calcRow(${index}); saveData();" class="w-full text-right p-0.5 border rounded text-[11px]">
       </td>
-      <td class="p-1.5 border-r text-center">
-        <input type="number" id="laku-${index}" oninput="calcRow(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs font-semibold">
+      <td class="p-1 border-r text-center">
+        <input type="number" id="laku-${index}" oninput="calcRow(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-0.5 border rounded text-[11px] font-semibold">
       </td>
-      <td class="p-1.5 text-right bg-slate-100 font-bold text-slate-800 text-xs" id="subtotal-${index}">Rp 0</td>
+      <td class="p-1 text-right bg-slate-100 font-bold text-slate-800 text-[11px]" id="subtotal-${index}">Rp 0</td>
     `;
     tbody.appendChild(row);
   });
@@ -87,6 +87,17 @@ function calcRow(index) {
   const subtotal = price * laku;
   document.getElementById(`subtotal-${index}`).innerText = formatRupiah(subtotal);
   calculateTotal();
+}
+
+function calculateTotal() {
+  let grandTotal = 0;
+  salesItems.forEach((_, index) => {
+    const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
+    const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+    grandTotal += price * laku;
+  });
+  document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
+  validateAll();
 }
 
 function validateAll() {
@@ -102,7 +113,7 @@ function validateAll() {
     }
   });
 
-  // 2. Validasi Laku > Stok Awal (untuk item yang bersesuaian)
+  // 2. Validasi Laku > Stok Awal
   salesItems.forEach((salesItem, sIndex) => {
     const laku = parseFloat(document.getElementById(`laku-${sIndex}`).value) || 0;
     const lakuInput = document.getElementById(`laku-${sIndex}`);
@@ -125,6 +136,31 @@ function validateAll() {
     }
   });
 
+  // 3. Validasi Pembayaran QR + CASH == Total Penjualan
+  let grandTotal = 0;
+  salesItems.forEach((_, index) => {
+    const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
+    const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+    grandTotal += price * laku;
+  });
+
+  const qrVal = parseFloat(document.getElementById('input-qr').value) || 0;
+  const cashVal = parseFloat(document.getElementById('input-cash').value) || 0;
+  const totalBayar = qrVal + cashVal;
+
+  const qrInput = document.getElementById('input-qr');
+  const cashInput = document.getElementById('input-cash');
+
+  if (grandTotal > 0 && (qrVal > 0 || cashVal > 0) && totalBayar !== grandTotal) {
+    qrInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+    cashInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+    const selisih = Math.abs(totalBayar - grandTotal);
+    warnings.push(`Total Pembayaran (QR + Cash: <b>${formatRupiah(totalBayar)}</b>) tidak sesuai dengan Total Penjualan (<b>${formatRupiah(grandTotal)}</b>)! Selisih: <b>${formatRupiah(selisih)}</b>`);
+  } else {
+    qrInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+    cashInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+  }
+
   if (warnings.length > 0) {
     alertBox.innerHTML = `⚠️ <b>Peringatan:</b><br>` + warnings.join('<br>');
     alertBox.classList.remove('hidden');
@@ -132,16 +168,6 @@ function validateAll() {
     alertBox.innerHTML = '';
     alertBox.classList.add('hidden');
   }
-}
-
-function calculateTotal() {
-  let grandTotal = 0;
-  salesItems.forEach((_, index) => {
-    const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
-    const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
-    grandTotal += price * laku;
-  });
-  document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
 }
 
 function saveData() {
@@ -212,18 +238,20 @@ function downloadPDF() {
 
   const noPrintElements = document.querySelectorAll('.no-print');
   noPrintElements.forEach(el => el.style.display = 'none');
+  element.classList.add('pdf-render');
 
   const opt = {
-    margin:       [0.15, 0.2, 0.15, 0.2],
+    margin:       [0.1, 0.15, 0.1, 0.15],
     filename:     filename,
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { scale: 2, useCORS: true, logging: false },
     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: 'avoid-all' }
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
   html2pdf().set(opt).from(element).save().then(() => {
     noPrintElements.forEach(el => el.style.display = 'flex');
+    element.classList.remove('pdf-render');
   });
 }
 
