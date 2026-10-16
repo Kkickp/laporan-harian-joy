@@ -1,6 +1,6 @@
 const stokItems = ["Cinnamon", "Joy Choux", "Mac n cheese", "Donang", "Joy QQ", "Cheese cake"];
 
-const salesItems = [
+let salesItems = [
   { name: "Single Cinn", price: 11000 },
   { name: "Cinn standarisi 4", price: 38000 },
   { name: "Joy Choux 6", price: 6000 },
@@ -67,8 +67,17 @@ function renderPenjualanTable() {
   salesItems.forEach((item, index) => {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
+    
+    const nameColumn = item.custom 
+      ? `<input type="text" id="name-${index}" value="${item.name}" oninput="salesItems[${index}].name = this.value; validateAll(); saveData();" placeholder="Nama Barang" class="w-full p-0.5 border rounded text-[11px] font-medium">`
+      : item.name;
+
+    const deleteBtn = item.custom 
+      ? `<button onclick="removeCustomRow(${index})" class="text-rose-600 hover:text-rose-800 font-bold text-xs no-print px-1">✕</button>`
+      : '';
+
     row.innerHTML = `
-      <td class="p-1 border-r font-medium text-slate-800 text-[11px]">${item.name}</td>
+      <td class="p-1 border-r font-medium text-slate-800 text-[11px]">${nameColumn}</td>
       <td class="p-1 border-r text-right">
         <input type="number" id="price-${index}" value="${item.price}" oninput="calcRow(${index}); saveData();" class="w-full text-right p-0.5 border rounded text-[11px]">
       </td>
@@ -76,14 +85,29 @@ function renderPenjualanTable() {
         <input type="number" id="laku-${index}" oninput="calcRow(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-0.5 border rounded text-[11px] font-semibold">
       </td>
       <td class="p-1 text-right bg-slate-100 font-bold text-slate-800 text-[11px]" id="subtotal-${index}">Rp 0</td>
+      <td class="p-1 text-center no-print">${deleteBtn}</td>
     `;
     tbody.appendChild(row);
   });
 }
 
+function addCustomRow() {
+  salesItems.push({ name: "", price: 0, custom: true });
+  renderPenjualanTable();
+  saveData();
+}
+
+function removeCustomRow(index) {
+  salesItems.splice(index, 1);
+  renderPenjualanTable();
+  calculateTotal();
+  saveData();
+}
+
 function calcRow(index) {
   const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
   const laku = parseFloat(document.getElementById(`laku-${index}`).value) || 0;
+  salesItems[index].price = price;
   const subtotal = price * laku;
   document.getElementById(`subtotal-${index}`).innerText = formatRupiah(subtotal);
   calculateTotal();
@@ -104,7 +128,6 @@ function validateAll() {
   const alertBox = document.getElementById('warning-alert');
   let warnings = [];
 
-  // 1. Validasi Sisa > Awal
   stokItems.forEach((item, index) => {
     const awal = parseFloat(document.getElementById(`stok-awal-${index}`).value) || 0;
     const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`).value) || 0;
@@ -113,14 +136,17 @@ function validateAll() {
     }
   });
 
-  // 2. Validasi Laku > Stok Awal
   salesItems.forEach((salesItem, sIndex) => {
     const laku = parseFloat(document.getElementById(`laku-${sIndex}`).value) || 0;
     const lakuInput = document.getElementById(`laku-${sIndex}`);
 
+    if (!lakuInput) return;
+
     let matchedStokIndex = stokItems.findIndex(stokName => 
-      salesItem.name.toLowerCase().includes(stokName.toLowerCase()) || 
-      stokName.toLowerCase().includes(salesItem.name.toLowerCase())
+      salesItem.name && (
+        salesItem.name.toLowerCase().includes(stokName.toLowerCase()) || 
+        stokName.toLowerCase().includes(salesItem.name.toLowerCase())
+      )
     );
 
     if (matchedStokIndex !== -1 && laku > 0) {
@@ -136,7 +162,6 @@ function validateAll() {
     }
   });
 
-  // 3. Validasi Pembayaran QR + CASH == Total Penjualan
   let grandTotal = 0;
   salesItems.forEach((_, index) => {
     const price = parseFloat(document.getElementById(`price-${index}`).value) || 0;
@@ -178,12 +203,14 @@ function saveData() {
     qr: document.getElementById('input-qr').value,
     cash: document.getElementById('input-cash').value,
     stok: stokItems.map((_, i) => ({
-      awal: document.getElementById(`stok-awal-${i}`).value,
-      sisa: document.getElementById(`stok-sisa-${i}`).value
+      awal: document.getElementById(`stok-awal-${i}`)?.value || '',
+      sisa: document.getElementById(`stok-sisa-${i}`)?.value || ''
     })),
-    penjualan: salesItems.map((_, i) => ({
-      price: document.getElementById(`price-${i}`).value,
-      laku: document.getElementById(`laku-${i}`).value
+    penjualan: salesItems.map((item, i) => ({
+      name: item.name,
+      price: document.getElementById(`price-${i}`)?.value || item.price,
+      laku: document.getElementById(`laku-${i}`)?.value || '',
+      custom: item.custom || false
     }))
   };
   localStorage.setItem('laporan_harian_joy_data', JSON.stringify(data));
@@ -213,9 +240,14 @@ function loadData() {
   }
 
   if (data.penjualan) {
+    salesItems = data.penjualan.map(p => ({
+      name: p.name,
+      price: parseFloat(p.price) || 0,
+      custom: p.custom || false
+    }));
+    renderPenjualanTable();
     data.penjualan.forEach((p, i) => {
-      if (document.getElementById(`price-${i}`)) {
-        document.getElementById(`price-${i}`).value = p.price !== undefined ? p.price : salesItems[i].price;
+      if (document.getElementById(`laku-${i}`)) {
         document.getElementById(`laku-${i}`).value = p.laku || '';
         calcRow(i);
       }
@@ -231,6 +263,10 @@ function clearForm() {
   }
 }
 
+function printLaporan() {
+  window.print();
+}
+
 function downloadPDF() {
   const element = document.getElementById('laporan-content');
   const dateVal = document.getElementById('input-tanggal').value || 'tanpa-tanggal';
@@ -241,7 +277,7 @@ function downloadPDF() {
   element.classList.add('pdf-render');
 
   const opt = {
-    margin:       [0.1, 0.15, 0.1, 0.15],
+    margin:       [0.15, 0.15, 0.15, 0.15],
     filename:     filename,
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { scale: 2, useCORS: true, logging: false },
