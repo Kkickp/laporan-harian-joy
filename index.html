@@ -79,8 +79,8 @@
           </tbody>
         </table>
       </div>
-      <div class="no-print mt-1 text-right">
-        <button onclick="addCustomRow()" class="px-2.5 py-1 bg-emerald-600 text-white text-xs font-semibold rounded hover:bg-emerald-700 transition">
+      <div class="no-print mt-2 text-right relative z-10">
+        <button type="button" id="btn-add-row" onclick="addCustomRow()" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-semibold rounded hover:bg-emerald-700 transition cursor-pointer">
           + Tambah Barang
         </button>
       </div>
@@ -105,18 +105,18 @@
     </div>
 
     <!-- ACTION BUTTONS -->
-    <div class="no-print flex justify-between items-center pt-1 gap-2">
-      <button onclick="clearForm()" class="px-3 py-1.5 bg-rose-100 text-rose-700 font-semibold rounded hover:bg-rose-200 transition text-xs">
+    <div class="no-print flex justify-between items-center pt-1 gap-2 relative z-10">
+      <button type="button" onclick="clearForm()" class="px-3 py-1.5 bg-rose-100 text-rose-700 font-semibold rounded hover:bg-rose-200 transition text-xs cursor-pointer">
         Reset Form
       </button>
       <div class="flex gap-2">
-        <button onclick="printLaporan()" class="px-3 py-1.5 bg-slate-700 text-white font-bold rounded shadow hover:bg-slate-800 transition flex items-center gap-1.5 text-xs">
+        <button type="button" onclick="printLaporan()" class="px-3 py-1.5 bg-slate-700 text-white font-bold rounded shadow hover:bg-slate-800 transition flex items-center gap-1.5 text-xs cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
           </svg>
           Cetak Laporan
         </button>
-        <button onclick="downloadPDF()" class="px-3 py-1.5 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition flex items-center gap-1.5 text-xs">
+        <button type="button" onclick="downloadPDF()" class="px-3 py-1.5 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition flex items-center gap-1.5 text-xs cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
