@@ -14,9 +14,13 @@
     width: 100% !important;
     max-width: 100% !important;
   }
+  /* Mengunci halaman maksimal 2 lembar A4 saat dicetak */
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
 }
 
-/* Memastikan elemen penting tidak terpotong saat diekspor ke PDF */
 .pdf-render table,
 .pdf-render tr,
 .pdf-render .pdf-keep-together {
