@@ -4,53 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laporan Harian Joy</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library html2pdf.js untuk langsung download PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <!-- Custom Style -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans p-4 min-h-screen">
+<body class="bg-slate-100 text-slate-800 font-sans p-2 sm:p-4 min-h-screen">
 
-  <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-md container-card" id="laporan-content">
+  <div class="max-w-3xl mx-auto bg-white p-3 sm:p-5 rounded-xl shadow-md container-card" id="laporan-content">
     
     <!-- HEADER -->
-    <div class="border-b-2 border-slate-800 pb-4 mb-6 text-center">
-      <h1 class="text-2xl font-bold tracking-wide uppercase text-slate-900">LAPORAN HARIAN PENJUALAN</h1>
-      <p class="text-xs text-slate-500 font-medium">Sistem Catatan Kasir & Stok Digital</p>
+    <div class="border-b-2 border-slate-800 pb-2 mb-3 text-center">
+      <h1 class="text-lg sm:text-2xl font-bold tracking-wide uppercase text-slate-900">LAPORAN HARIAN PENJUALAN</h1>
+      <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Sistem Catatan Kasir & Stok Digital</p>
     </div>
 
+    <!-- BOX NOTIFIKASI WARNING -->
+    <div id="warning-alert" class="hidden no-print mb-3 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded"></div>
+
     <!-- INFO FORM HEADER -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
       <div>
-        <label class="block text-xs font-bold text-slate-600 mb-1">TEMPAT:</label>
+        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">TEMPAT:</label>
         <input type="text" id="input-tempat" oninput="saveData()" placeholder="Nama Cabang / Outlet"
-          class="w-full text-sm font-semibold p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
       <div>
-        <label class="block text-xs font-bold text-slate-600 mb-1">TANGGAL:</label>
+        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">TANGGAL:</label>
         <input type="date" id="input-tanggal" onchange="saveData()"
-          class="w-full text-sm font-semibold p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
       <div>
-        <label class="block text-xs font-bold text-slate-600 mb-1">KASIR:</label>
+        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">KASIR:</label>
         <input type="text" id="input-kasir" oninput="saveData()" placeholder="Nama Kasir"
-          class="w-full text-sm font-semibold p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
     </div>
 
     <!-- TABEL STOK -->
-    <div class="mb-6">
-      <h2 class="text-sm font-bold bg-slate-800 text-white px-3 py-1.5 rounded-t">LAPORAN STOK</h2>
+    <div class="mb-3">
+      <h2 class="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-t">LAPORAN STOK</h2>
       <div class="overflow-x-auto border border-t-0 border-slate-300 rounded-b">
-        <table class="w-full text-sm text-left">
-          <thead class="bg-slate-100 text-xs text-slate-700 uppercase border-b border-slate-300">
+        <table class="w-full text-xs text-left min-w-[320px]">
+          <thead class="bg-slate-100 text-[10px] sm:text-xs text-slate-700 uppercase border-b border-slate-300">
             <tr>
-              <th class="p-2 border-r">NAMA BARANG</th>
-              <th class="p-2 border-r w-24 text-center">AWAL</th>
-              <th class="p-2 border-r w-24 text-center">SISA</th>
-              <th class="p-2 w-24 text-center bg-slate-200">TERJUAL</th>
+              <th class="p-1.5 border-r">NAMA BARANG</th>
+              <th class="p-1.5 border-r w-16 sm:w-20 text-center">AWAL</th>
+              <th class="p-1.5 border-r w-16 sm:w-20 text-center">SISA</th>
+              <th class="p-1.5 w-16 sm:w-20 text-center bg-slate-200">TERJUAL</th>
             </tr>
           </thead>
           <tbody id="stok-table-body">
@@ -61,16 +61,16 @@
     </div>
 
     <!-- TABEL PENJUALAN -->
-    <div class="mb-6">
-      <h2 class="text-sm font-bold bg-slate-800 text-white px-3 py-1.5 rounded-t">LAPORAN PENJUALAN</h2>
+    <div class="mb-3">
+      <h2 class="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-t">LAPORAN PENJUALAN</h2>
       <div class="overflow-x-auto border border-t-0 border-slate-300 rounded-b">
-        <table class="w-full text-sm text-left">
-          <thead class="bg-slate-100 text-xs text-slate-700 uppercase border-b border-slate-300">
+        <table class="w-full text-xs text-left min-w-[360px]">
+          <thead class="bg-slate-100 text-[10px] sm:text-xs text-slate-700 uppercase border-b border-slate-300">
             <tr>
-              <th class="p-2 border-r">NAMA BARANG</th>
-              <th class="p-2 border-r w-32 text-right">HARGA JUAL</th>
-              <th class="p-2 border-r w-24 text-center">LAKU (QTY)</th>
-              <th class="p-2 w-36 text-right bg-slate-200">JUMLAH (RP)</th>
+              <th class="p-1.5 border-r">NAMA BARANG</th>
+              <th class="p-1.5 border-r w-24 sm:w-28 text-right">HARGA JUAL</th>
+              <th class="p-1.5 border-r w-16 sm:w-20 text-center">LAKU (QTY)</th>
+              <th class="p-1.5 w-24 sm:w-32 text-right bg-slate-200">JUMLAH (RP)</th>
             </tr>
           </thead>
           <tbody id="penjualan-table-body">
@@ -81,29 +81,29 @@
     </div>
 
     <!-- METODE PEMBAYARAN & TOTAL -->
-    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3 mb-6">
-      <div class="flex items-center justify-between text-sm font-semibold">
+    <div class="bg-slate-50 p-2.5 sm:p-3 rounded-lg border border-slate-200 space-y-2 mb-3">
+      <div class="flex items-center justify-between text-xs font-semibold">
         <label for="input-qr" class="text-slate-700">PEMBAYARAN QR (Rp):</label>
         <input type="number" id="input-qr" oninput="calculateTotal(); saveData();" placeholder="0"
-          class="w-48 text-right p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-28 sm:w-40 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
-      <div class="flex items-center justify-between text-sm font-semibold">
+      <div class="flex items-center justify-between text-xs font-semibold">
         <label for="input-cash" class="text-slate-700">PEMBAYARAN CASH (Rp):</label>
         <input type="number" id="input-cash" oninput="calculateTotal(); saveData();" placeholder="0"
-          class="w-48 text-right p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-28 sm:w-40 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
-      <div class="flex items-center justify-between text-base font-bold text-slate-900 border-t border-slate-300 pt-3">
+      <div class="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-900 border-t border-slate-300 pt-2">
         <span>TOTAL PENJUALAN:</span>
-        <span id="grand-total" class="text-blue-700 text-lg">Rp 0</span>
+        <span id="grand-total" class="text-blue-700 text-sm sm:text-base">Rp 0</span>
       </div>
     </div>
 
     <!-- ACTION BUTTONS -->
-    <div class="no-print flex justify-between items-center pt-2">
-      <button onclick="clearForm()" class="px-4 py-2 bg-rose-100 text-rose-700 font-semibold rounded hover:bg-rose-200 transition text-sm">
+    <div class="no-print flex justify-between items-center pt-1 gap-2">
+      <button onclick="clearForm()" class="px-3 py-1.5 bg-rose-100 text-rose-700 font-semibold rounded hover:bg-rose-200 transition text-xs">
         Reset Form
       </button>
-      <button onclick="downloadPDF()" class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition flex items-center gap-2 text-sm">
+      <button onclick="downloadPDF()" class="px-4 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition flex items-center gap-1.5 text-xs">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
@@ -113,7 +113,6 @@
 
   </div>
 
-  <!-- Custom Script -->
-  <script src="script.js"></script>
+  <script src="Script.js"></script>
 </body>
 </html>
