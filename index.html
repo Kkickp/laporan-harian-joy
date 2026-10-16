@@ -8,49 +8,49 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans p-2 sm:p-4 min-h-screen">
+<body class="bg-slate-100 text-slate-800 font-sans p-1.5 sm:p-4 min-h-screen">
 
-  <div class="max-w-3xl mx-auto bg-white p-3 sm:p-5 rounded-xl shadow-md container-card" id="laporan-content">
+  <div class="max-w-3xl mx-auto bg-white p-2.5 sm:p-5 rounded-xl shadow-md container-card" id="laporan-content">
     
     <!-- HEADER -->
-    <div class="border-b-2 border-slate-800 pb-2 mb-3 text-center">
-      <h1 class="text-lg sm:text-2xl font-bold tracking-wide uppercase text-slate-900">LAPORAN HARIAN PENJUALAN</h1>
-      <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Sistem Catatan Kasir & Stok Digital</p>
+    <div class="border-b-2 border-slate-800 pb-1.5 mb-2.5 text-center">
+      <h1 class="text-base sm:text-xl font-bold tracking-wide uppercase text-slate-900">LAPORAN HARIAN PENJUALAN</h1>
+      <p class="text-[9px] sm:text-xs text-slate-500 font-medium">Sistem Catatan Kasir & Stok Digital</p>
     </div>
 
     <!-- BOX NOTIFIKASI WARNING -->
-    <div id="warning-alert" class="hidden no-print mb-3 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded"></div>
+    <div id="warning-alert" class="hidden no-print mb-2.5 p-2 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded"></div>
 
     <!-- INFO FORM HEADER -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+    <div class="grid grid-cols-3 gap-2 mb-2.5 bg-slate-50 p-2 rounded-lg border border-slate-200">
       <div>
-        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">TEMPAT:</label>
-        <input type="text" id="input-tempat" oninput="saveData()" placeholder="Nama Cabang / Outlet"
-          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+        <label class="block text-[9px] sm:text-xs font-bold text-slate-600 mb-0.5">TEMPAT:</label>
+        <input type="text" id="input-tempat" oninput="saveData()" placeholder="Cabang"
+          class="w-full text-xs font-semibold p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
       <div>
-        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">TANGGAL:</label>
+        <label class="block text-[9px] sm:text-xs font-bold text-slate-600 mb-0.5">TANGGAL:</label>
         <input type="date" id="input-tanggal" onchange="saveData()"
-          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-full text-xs font-semibold p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
       <div>
-        <label class="block text-[10px] sm:text-xs font-bold text-slate-600 mb-0.5">KASIR:</label>
-        <input type="text" id="input-kasir" oninput="saveData()" placeholder="Nama Kasir"
-          class="w-full text-xs font-semibold p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+        <label class="block text-[9px] sm:text-xs font-bold text-slate-600 mb-0.5">KASIR:</label>
+        <input type="text" id="input-kasir" oninput="saveData()" placeholder="Kasir"
+          class="w-full text-xs font-semibold p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
     </div>
 
     <!-- TABEL STOK -->
-    <div class="mb-3">
-      <h2 class="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-t">LAPORAN STOK</h2>
+    <div class="mb-2.5">
+      <h2 class="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-t">LAPORAN STOK</h2>
       <div class="overflow-x-auto border border-t-0 border-slate-300 rounded-b">
-        <table class="w-full text-xs text-left min-w-[320px]">
-          <thead class="bg-slate-100 text-[10px] sm:text-xs text-slate-700 uppercase border-b border-slate-300">
+        <table class="w-full text-xs text-left min-w-[300px]">
+          <thead class="bg-slate-100 text-[10px] text-slate-700 uppercase border-b border-slate-300">
             <tr>
-              <th class="p-1.5 border-r">NAMA BARANG</th>
-              <th class="p-1.5 border-r w-16 sm:w-20 text-center">AWAL</th>
-              <th class="p-1.5 border-r w-16 sm:w-20 text-center">SISA</th>
-              <th class="p-1.5 w-16 sm:w-20 text-center bg-slate-200">TERJUAL</th>
+              <th class="p-1 border-r">NAMA BARANG</th>
+              <th class="p-1 border-r w-14 text-center">AWAL</th>
+              <th class="p-1 border-r w-14 text-center">SISA</th>
+              <th class="p-1 w-14 text-center bg-slate-200">TERJUAL</th>
             </tr>
           </thead>
           <tbody id="stok-table-body">
@@ -61,16 +61,16 @@
     </div>
 
     <!-- TABEL PENJUALAN -->
-    <div class="mb-3">
-      <h2 class="text-xs font-bold bg-slate-800 text-white px-2.5 py-1 rounded-t">LAPORAN PENJUALAN</h2>
+    <div class="mb-2.5">
+      <h2 class="text-xs font-bold bg-slate-800 text-white px-2 py-0.5 rounded-t">LAPORAN PENJUALAN</h2>
       <div class="overflow-x-auto border border-t-0 border-slate-300 rounded-b">
-        <table class="w-full text-xs text-left min-w-[360px]">
-          <thead class="bg-slate-100 text-[10px] sm:text-xs text-slate-700 uppercase border-b border-slate-300">
+        <table class="w-full text-xs text-left min-w-[320px]">
+          <thead class="bg-slate-100 text-[10px] text-slate-700 uppercase border-b border-slate-300">
             <tr>
-              <th class="p-1.5 border-r">NAMA BARANG</th>
-              <th class="p-1.5 border-r w-24 sm:w-28 text-right">HARGA JUAL</th>
-              <th class="p-1.5 border-r w-16 sm:w-20 text-center">LAKU (QTY)</th>
-              <th class="p-1.5 w-24 sm:w-32 text-right bg-slate-200">JUMLAH (RP)</th>
+              <th class="p-1 border-r">NAMA BARANG</th>
+              <th class="p-1 border-r w-20 text-right">HARGA JUAL</th>
+              <th class="p-1 border-r w-14 text-center">LAKU (QTY)</th>
+              <th class="p-1 w-24 text-right bg-slate-200">JUMLAH (RP)</th>
             </tr>
           </thead>
           <tbody id="penjualan-table-body">
@@ -81,18 +81,18 @@
     </div>
 
     <!-- METODE PEMBAYARAN & TOTAL -->
-    <div class="bg-slate-50 p-2.5 sm:p-3 rounded-lg border border-slate-200 space-y-2 mb-3">
+    <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-1.5 mb-2.5 pdf-keep-together">
       <div class="flex items-center justify-between text-xs font-semibold">
         <label for="input-qr" class="text-slate-700">PEMBAYARAN QR (Rp):</label>
         <input type="number" id="input-qr" oninput="calculateTotal(); saveData();" placeholder="0"
-          class="w-28 sm:w-40 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-28 sm:w-36 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
       <div class="flex items-center justify-between text-xs font-semibold">
         <label for="input-cash" class="text-slate-700">PEMBAYARAN CASH (Rp):</label>
         <input type="number" id="input-cash" oninput="calculateTotal(); saveData();" placeholder="0"
-          class="w-28 sm:w-40 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+          class="w-28 sm:w-36 text-right p-1 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none">
       </div>
-      <div class="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-900 border-t border-slate-300 pt-2">
+      <div class="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-900 border-t border-slate-300 pt-1.5">
         <span>TOTAL PENJUALAN:</span>
         <span id="grand-total" class="text-blue-700 text-sm sm:text-base">Rp 0</span>
       </div>
