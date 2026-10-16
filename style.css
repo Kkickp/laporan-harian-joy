@@ -5,10 +5,21 @@
   body {
     background: white !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
   .container-card {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
+}
+
+/* Memastikan elemen penting tidak terpotong saat diekspor ke PDF */
+.pdf-render table,
+.pdf-render tr,
+.pdf-render .pdf-keep-together {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
