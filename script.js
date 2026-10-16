@@ -3,8 +3,9 @@ const stokItems = ["Cinnamon", "Joy Choux", "Mac n cheese", "Donang", "Joy QQ", 
 let defaultSalesItems = [
   { name: "Single Cinn", price: 11000 },
   { name: "Cinn standar isi 4", price: 38000 },
-  { name: "Joy Choux", price: 6000 },
-  { name: "Joy chocuk", price: 7000 },
+  { name: "Joy Choux ori", price: 11000 },
+  { name: "Joy choux premium", price: 7000 },
+  { name: "Joy choux dubai kecil", price: 8000 },
   { name: "Joy Choux isi 3", price: 15000 },
   { name: "Joy Choux isi 5", price: 25000 },
   { name: "Mac n cheese 15", price: 15000 },
@@ -17,9 +18,9 @@ let defaultSalesItems = [
   { name: "Donang 50", price: 50000 },
   { name: "Donang 55", price: 55000 },
   { name: "Donang 140", price: 140000 },
-  { name: "Donang 160", price: 160000 },
-  { name: "Joy QQ", price: 0 },
-  { name: "Cheesecake", price: 35000 }
+  { name: "Donang 160", price: 160000 }, 
+  { name: "slicecake", price: 20000 }, 
+  { name: "Cheesecake", price: 36000 }
 ];
 
 let salesItems = JSON.parse(JSON.stringify(defaultSalesItems));
