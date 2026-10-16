@@ -33,14 +33,14 @@ function renderStokTable() {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
     row.innerHTML = `
-      <td class="p-2 border-r font-medium text-slate-800">${item}</td>
-      <td class="p-2 border-r text-center">
-        <input type="number" id="stok-awal-${index}" oninput="calcStok(${index}); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
+      <td class="p-1.5 border-r font-medium text-slate-800">${item}</td>
+      <td class="p-1.5 border-r text-center">
+        <input type="number" id="stok-awal-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
       </td>
-      <td class="p-2 border-r text-center">
-        <input type="number" id="stok-sisa-${index}" oninput="calcStok(${index}); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
+      <td class="p-1.5 border-r text-center">
+        <input type="number" id="stok-sisa-${index}" oninput="calcStok(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs">
       </td>
-      <td class="p-2 text-center bg-slate-100 font-bold text-slate-700 text-xs" id="stok-terjual-${index}">0</td>
+      <td class="p-1.5 text-center bg-slate-100 font-bold text-slate-700 text-xs" id="stok-terjual-${index}">0</td>
     `;
     tbody.appendChild(row);
   });
@@ -49,6 +49,14 @@ function renderStokTable() {
 function calcStok(index) {
   const awal = parseFloat(document.getElementById(`stok-awal-${index}`).value) || 0;
   const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`).value) || 0;
+  
+  const sisaInput = document.getElementById(`stok-sisa-${index}`);
+  if (sisa > awal && awal > 0) {
+    sisaInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+  } else {
+    sisaInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+  }
+
   const terjual = awal - sisa;
   document.getElementById(`stok-terjual-${index}`).innerText = terjual >= 0 ? terjual : 0;
 }
@@ -60,14 +68,14 @@ function renderPenjualanTable() {
     const row = document.createElement('tr');
     row.className = 'border-b border-slate-200 hover:bg-slate-50';
     row.innerHTML = `
-      <td class="p-2 border-r font-medium text-slate-800">${item.name}</td>
-      <td class="p-2 border-r text-right">
+      <td class="p-1.5 border-r font-medium text-slate-800">${item.name}</td>
+      <td class="p-1.5 border-r text-right">
         <input type="number" id="price-${index}" value="${item.price}" oninput="calcRow(${index}); saveData();" class="w-full text-right p-1 border rounded text-xs">
       </td>
-      <td class="p-2 border-r text-center">
-        <input type="number" id="laku-${index}" oninput="calcRow(${index}); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs font-semibold">
+      <td class="p-1.5 border-r text-center">
+        <input type="number" id="laku-${index}" oninput="calcRow(${index}); validateAll(); saveData();" placeholder="0" class="w-full text-center p-1 border rounded text-xs font-semibold">
       </td>
-      <td class="p-2 text-right bg-slate-100 font-bold text-slate-800 text-xs" id="subtotal-${index}">Rp 0</td>
+      <td class="p-1.5 text-right bg-slate-100 font-bold text-slate-800 text-xs" id="subtotal-${index}">Rp 0</td>
     `;
     tbody.appendChild(row);
   });
@@ -79,6 +87,51 @@ function calcRow(index) {
   const subtotal = price * laku;
   document.getElementById(`subtotal-${index}`).innerText = formatRupiah(subtotal);
   calculateTotal();
+}
+
+function validateAll() {
+  const alertBox = document.getElementById('warning-alert');
+  let warnings = [];
+
+  // 1. Validasi Sisa > Awal
+  stokItems.forEach((item, index) => {
+    const awal = parseFloat(document.getElementById(`stok-awal-${index}`).value) || 0;
+    const sisa = parseFloat(document.getElementById(`stok-sisa-${index}`).value) || 0;
+    if (sisa > awal && awal > 0) {
+      warnings.push(`Sisa stok <b>${item}</b> (${sisa}) melebihi Stok Awal (${awal})!`);
+    }
+  });
+
+  // 2. Validasi Laku > Stok Awal (untuk item yang bersesuaian)
+  salesItems.forEach((salesItem, sIndex) => {
+    const laku = parseFloat(document.getElementById(`laku-${sIndex}`).value) || 0;
+    const lakuInput = document.getElementById(`laku-${sIndex}`);
+
+    let matchedStokIndex = stokItems.findIndex(stokName => 
+      salesItem.name.toLowerCase().includes(stokName.toLowerCase()) || 
+      stokName.toLowerCase().includes(salesItem.name.toLowerCase())
+    );
+
+    if (matchedStokIndex !== -1 && laku > 0) {
+      const awal = parseFloat(document.getElementById(`stok-awal-${matchedStokIndex}`).value) || 0;
+      if (laku > awal && awal > 0) {
+        lakuInput.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
+        warnings.push(`Penjualan <b>${salesItem.name}</b> (${laku}) melebihi stok awal ${stokItems[matchedStokIndex]} (${awal})!`);
+      } else {
+        lakuInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+      }
+    } else {
+      lakuInput.classList.remove('bg-red-100', 'border-red-500', 'text-red-700');
+    }
+  });
+
+  if (warnings.length > 0) {
+    alertBox.innerHTML = `⚠️ <b>Peringatan:</b><br>` + warnings.join('<br>');
+    alertBox.classList.remove('hidden');
+  } else {
+    alertBox.innerHTML = '';
+    alertBox.classList.add('hidden');
+  }
 }
 
 function calculateTotal() {
@@ -142,6 +195,7 @@ function loadData() {
       }
     });
   }
+  validateAll();
 }
 
 function clearForm() {
@@ -160,11 +214,12 @@ function downloadPDF() {
   noPrintElements.forEach(el => el.style.display = 'none');
 
   const opt = {
-    margin:       [0.3, 0.3, 0.3, 0.3],
+    margin:       [0.15, 0.2, 0.15, 0.2],
     filename:     filename,
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    html2canvas:  { scale: 2, useCORS: true, logging: false },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: 'avoid-all' }
   };
 
   html2pdf().set(opt).from(element).save().then(() => {
@@ -172,7 +227,7 @@ function downloadPDF() {
   });
 }
 
-// Inisialisasi tampilan
+// Inisialisasi
 renderStokTable();
 renderPenjualanTable();
 loadData();
